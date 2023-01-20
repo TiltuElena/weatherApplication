@@ -1,0 +1,102 @@
+<div id="wrapper" [ngClass]="{ notLoaded: !weatherService.loaded }">
+  <div id="topContainer">
+    <div id="searchBar">
+      <img
+        src="assets/magnify%20(1).png"
+        alt="magnifier"
+        (click)="weatherService.loadData()"
+      />
+      <input
+        type="text"
+        placeholder="Search for a city"
+        [(ngModel)]="weatherService.weatherCity"
+        (keydown.enter)="weatherService.loadData()"
+      />
+    </div>
+    <div class="tempScale" *ngIf="weatherService.loaded">
+      <div
+        class="scale celsius"
+        (click)="weatherService.scale = 273.15; weatherService.loadData()"
+      >
+        C
+      </div>
+      <div
+        class="scale kelvin"
+        (click)="weatherService.scale = 0; weatherService.loadData()"
+      >
+        K
+      </div>
+    </div>
+  </div>
+  <div id="mainContainer" *ngIf="weatherService.loaded">
+    <div id="bottomContainer">
+      <div class="weatherInfo">
+        <div class="date">
+          <span class="text"
+            >{{ currentDate | date : "EEEE" }},
+            {{ currentDate | date : "shortTime" }}</span
+          >
+          <span class="light-text">{{ currentDate | date : "longDate" }}</span>
+        </div>
+        <div class="location">
+          <img src="assets/map-marker%20(1).png" alt="location" />
+          <span class="text"
+            >{{ weatherService.weatherData.name }},
+            {{ weatherService.weatherData.sys.country }}</span
+          >
+        </div>
+      </div>
+      <div class="temperature">
+        <div class="temp mainTemp">
+          <span class="largeText text-end">{{
+            weatherService.weatherTemp
+          }}</span>
+          <span class="smallText tempSmall">o</span>
+          <span class="largeText degree" *ngIf="weatherService.scale === 0"
+            >K</span
+          >
+          <span class="largeText degree" *ngIf="weatherService.scale !== 0"
+            >C</span
+          >
+        </div>
+        <hr />
+        <div class="addTemp">
+          <span class="light-text">
+            {{ weatherService.weatherDescription }}</span
+          >
+          <div class="tempContainer">
+            <span class="light-text">Feels like</span>
+            <div class="temp">
+              <span class="light-text text-end">{{
+                weatherService.weatherTempFeel
+              }}</span>
+              <span class="smallText tempExtraSmall">o</span>
+              <span class="light-text degree" *ngIf="weatherService.scale !== 0"
+                >C</span
+              >
+              <span class="light-text degree" *ngIf="weatherService.scale === 0"
+                >K</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <img
+          id="weatherImg"
+          [src]="weatherService.weatherIcon"
+          alt="weatherIcon"
+        />
+      </div>
+    </div>
+    <div class="card-container">
+      <div *ngFor="let info of weatherService.weatherInfo">
+        <app-weather-data-card [item]="info"></app-weather-data-card>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="!weatherService.loaded" class="isLoading">
+    <img id="weather" src="assets/image1.png" alt="weatherImg" />
+    <h1>Follow the weather around the world!</h1>
+  </div>
+</div>

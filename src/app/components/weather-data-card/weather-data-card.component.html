@@ -1,0 +1,25 @@
+<section>
+  <div class="wrapper">
+    <h2>{{ item.detail }}</h2>
+    <img [src]="item.img" alt="icon" />
+    <div>
+      <span>{{ item.data }}</span>
+      <span
+        *ngIf="
+          weatherService.scale !== 0 &&
+          (item.detail === 'Max Temperature' ||
+            item.detail === 'Min Temperature')
+        "
+        >C</span
+      >
+      <span
+        *ngIf="
+          weatherService.scale === 0 &&
+          (item.detail === 'Max Temperature' ||
+            item.detail === 'Min Temperature')
+        "
+        >K</span
+      >
+    </div>
+  </div>
+</section>

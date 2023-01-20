@@ -1,0 +1,25 @@
+<main>
+  <section
+    id="currentForecast"
+    [ngClass]="{
+      timeMorning: currentHour >= 5 && currentHour <= 10,
+      timeDay: currentHour > 10 && currentHour <= 18,
+      timeEvening: currentHour > 18 && currentHour < 21,
+      timeNight: currentHour >= 21 || currentHour < 5
+    }"
+  >
+    <app-current-weather></app-current-weather>
+  </section>
+  <section
+    id="weekForecast"
+    *ngIf="weatherService.loaded"
+    [ngClass]="{
+      timeMorning: currentHour >= 5 && currentHour <= 10,
+      timeDay: currentHour > 10 && currentHour <= 18,
+      timeEvening: currentHour > 18 && currentHour < 21,
+      timeNight: currentHour >= 21 || currentHour < 5
+    }"
+  >
+    <app-weather-forecast></app-weather-forecast>
+  </section>
+</main>

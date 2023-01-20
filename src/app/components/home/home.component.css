@@ -1,0 +1,38 @@
+main {
+  display: flex;
+  gap: 30px;
+  margin: 30px;
+  justify-content: center;
+}
+
+.timeDay {
+  background: linear-gradient(92deg, rgb(68, 111, 138) 0%, rgb(100, 188, 221) 61%);
+}
+
+.timeNight {
+  background: linear-gradient(19deg, rgb(79, 18, 97) 8%, rgb(22, 28, 93) 26%, rgb(11, 24, 69) 45%, rgb(5, 5, 45) 64%);
+}
+
+.timeMorning {
+  background: linear-gradient(0deg, rgb(131, 58, 180) 15%, rgb(253, 29, 29) 52%, rgb(252, 145, 61) 71%, rgb(254, 212, 60) 100%);
+}
+
+.timeEvening {
+  background: linear-gradient(90deg, rgb(82, 103, 160) 0%, rgb(166, 118, 204) 100%);
+}
+
+#currentForecast {
+  box-sizing: border-box;
+  border-radius: 12px;
+  width: 60%;
+  padding: 40px;
+  margin: 20px;
+}
+
+#weekForecast {
+  border-radius: 12px;
+  width: 30%;
+  margin: 20px;
+}
+
+/*# sourceMappingURL=home.component.css.map */
