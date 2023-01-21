@@ -14,15 +14,17 @@
       />
     </div>
     <div class="tempScale" *ngIf="weatherService.loaded">
-      <button [disabled]="weatherService.disableC"
+      <button
+        [disabled]="weatherService.disableC"
         class="scale celsius"
-        (click)="weatherService.scale = 273.15; this.weatherService.updateC()"
+        (click)="this.weatherService.updateC()"
       >
         C
       </button>
-      <button [disabled]="weatherService.disableK"
+      <button
+        [disabled]="weatherService.disableK"
         class="scale kelvin"
-        (click)="weatherService.scale = 0; this.weatherService.updateK()"
+        (click)="this.weatherService.updateK()"
       >
         K
       </button>
@@ -49,7 +51,7 @@
       <div class="temperature">
         <div class="temp mainTemp">
           <span class="largeText text-end">{{
-            weatherService.weatherTemp
+            weatherService.weatherTemperature
           }}</span>
           <span class="smallText tempSmall">o</span>
           <span class="largeText degree" *ngIf="weatherService.scale === 0"
@@ -62,7 +64,12 @@
         <hr />
         <div class="addTemp">
           <span class="light-text">
-            {{ weatherService.weatherDescription }}</span
+            {{
+              weatherService.weatherData.weather[0].description
+                .slice(0, 1)
+                .toUpperCase() +
+                weatherService.weatherData.weather[0].description.slice(1)
+            }}</span
           >
           <div class="tempContainer">
             <span class="light-text">Feels like</span>
@@ -84,7 +91,11 @@
       <div>
         <img
           id="weatherImg"
-          [src]="weatherService.weatherIcon"
+          [src]="
+            'http://openweathermap.org/img/wn/' +
+            weatherService.weatherData.weather[0].icon +
+            '@4x.png'
+          "
           alt="weatherIcon"
         />
       </div>

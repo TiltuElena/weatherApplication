@@ -2,9 +2,9 @@ export interface ForecastDetailsInterface {
   date: Date;
   weekDay: string;
   max: number;
-  maxChange?: string;
+  maxChange: string;
   min: number;
-  minChange?: string;
+  minChange: string;
   icon: string;
   details: string;
 }

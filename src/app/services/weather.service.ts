@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import {
   ForecastDetailsInterface,
@@ -14,10 +14,8 @@ const API_KEY = environment.API_KEY;
 })
 export class WeatherService implements OnDestroy {
   weatherData: any;
-  weatherTemp: string = '';
+  weatherTemperature: string = '';
   weatherTempFeel: string = '';
-  weatherIcon: string = '';
-  weatherDescription: string = '';
   weatherCity: string = '';
   subscription1: any;
   subscription2: any;
@@ -27,9 +25,9 @@ export class WeatherService implements OnDestroy {
   disableC: boolean = true;
   disableK: boolean = false;
   forecastIcon: string[] = [];
-  forecastTemp: number[] = [];
+  forecastTemperature: number[] = [];
   forecastTempDetails: string[] = [];
-  data: string[] = [];
+  date: string[] = [];
   forecastData: ForecastDetailsInterface[] = [];
   weekday: string[] = [
     'Sunday',
@@ -52,66 +50,68 @@ export class WeatherService implements OnDestroy {
     this.forecastData = [];
 
     this.subscription1 = this.httpClient
-      .get(`${API_URL}weather?q=${this.weatherCity}&appid=${API_KEY}`)
-      .subscribe((res: any) => {
+      .get(`${API_URL}weather?`, {
+        params: { q: this.weatherCity, appid: API_KEY },
+      })
+      .subscribe((response: any) => {
         this.loaded = true;
-        this.weatherData = res;
-        this.weatherTemp = (res.main.temp - this.scale).toFixed(0);
-        this.weatherTempFeel = (res.main.feels_like - this.scale).toFixed(0);
-        this.weatherIcon = `http://openweathermap.org/img/wn/${res.weather[0].icon}@4x.png`;
-        this.weatherDescription = `${res.weather[0].description
-          .slice(0, 1)
-          .toUpperCase()}${res.weather[0].description.slice(1)}`;
+        this.weatherData = response;
+        this.weatherTemperature = (response.main.temp - this.scale).toFixed(0);
+        this.weatherTempFeel = (response.main.feels_like - this.scale).toFixed(
+          0
+        );
 
         this.weatherInfo = [
           {
             detail: 'Humidity',
             img: 'assets/icons8-humidity-64.png',
-            data: `${res.main.humidity}%`,
+            data: `${response.main.humidity}%`,
           },
           {
             detail: 'Wind Speed',
             img: 'assets/icons8-wind-47.png',
-            data: `${res.wind.speed}m/s`,
+            data: `${response.wind.speed}m/s`,
           },
           {
             detail: 'Visibility',
             img: 'assets/icons8-cloud-80.png',
-            data: `${(res.visibility / 100).toFixed(0)}%`,
+            data: `${(response.visibility / 100).toFixed(0)}%`,
           },
           {
             detail: 'Pressure',
             img: 'assets/icons8-pressure-48.png',
-            data: `${res.main.pressure}hPa`,
+            data: `${response.main.pressure}hPa`,
           },
           {
             detail: 'Max Temperature',
             img: 'assets/icons8-high-temperature-64.png',
-            data: `${(res.main.temp_max - this.scale).toFixed(0)}`,
-            dataChange: res.main.temp_max.toFixed(0)
+            data: `${(response.main.temp_max - this.scale).toFixed(0)}`,
+            dataChange: response.main.temp_max.toFixed(0),
           },
           {
             detail: 'Min Temperature',
             img: 'assets/icons8-low-temperature-64.png',
-            data: `${(res.main.temp_min - this.scale).toFixed(0)}`,
-            dataChange: res.main.temp_min.toFixed(0)
+            data: `${(response.main.temp_min - this.scale).toFixed(0)}`,
+            dataChange: response.main.temp_min.toFixed(0),
           },
         ];
       });
 
     this.subscription2 = this.httpClient
-      .get(`${API_URL}forecast?q=${this.weatherCity}&appid=${API_KEY}`)
-      .subscribe((res: any) => {
-        for (const elem of res.list) {
-          this.data.push(elem.dt_txt.substring(0, elem.dt_txt.indexOf(' ')));
+      .get(`${API_URL}forecast?`, {
+        params: { q: this.weatherCity, appid: API_KEY },
+      })
+      .subscribe((response: any) => {
+        for (const elem of response.list) {
+          this.date.push(elem.dt_txt.substring(0, elem.dt_txt.indexOf(' ')));
         }
 
-        this.data = [...new Set(this.data)].slice(1);
+        this.date = [...new Set(this.date)].slice(1);
 
-        for (const data of this.data) {
-          for (const elem of res.list) {
+        for (const data of this.date) {
+          for (const elem of response.list) {
             if (elem.dt_txt.substring(0, elem.dt_txt.indexOf(' ')) === data) {
-              this.forecastTemp.push(
+              this.forecastTemperature.push(
                 Number((Number(elem.main.temp) - this.scale).toFixed(0))
               );
               this.forecastIcon.push(elem.weather[0].icon);
@@ -126,31 +126,41 @@ export class WeatherService implements OnDestroy {
           this.forecastData.push({
             date: new Date(data),
             weekDay: this.weekday[new Date(data).getDay()],
-            max: Math.max(...this.forecastTemp),
-            min: Math.min(...this.forecastTemp),
-            maxChange: (Math.max(...this.forecastTemp) + 273.15).toFixed(),
-            minChange: (Math.min(...this.forecastTemp) + 273.15).toFixed(),
+            max: Math.max(...this.forecastTemperature),
+            min: Math.min(...this.forecastTemperature),
+            maxChange: (
+              Math.max(...this.forecastTemperature) + 273.15
+            ).toFixed(),
+            minChange: (
+              Math.min(...this.forecastTemperature) + 273.15
+            ).toFixed(),
             icon: `http://openweathermap.org/img/wn/${this.forecastIcon[0]}@2x.png`,
             details: this.forecastTempDetails[0],
           });
 
-          this.forecastTemp = [];
+          this.forecastTemperature = [];
           this.forecastIcon = [];
           this.forecastTempDetails = [];
-          this.data = [];
+          this.date = [];
         }
       });
   }
 
   updateK() {
-    this.weatherTemp = (Number(this.weatherTemp) + 273.15).toFixed(0);
+    this.scale = 0;
+    this.weatherTemperature = (
+      Number(this.weatherTemperature) + 273.15
+    ).toFixed(0);
     this.weatherTempFeel = (Number(this.weatherTempFeel) + 273.15).toFixed(0);
     this.disableK = true;
     this.disableC = false;
   }
 
   updateC() {
-    this.weatherTemp = (Number(this.weatherTemp) - 273.15).toFixed(0);
+    this.scale = 273.15;
+    this.weatherTemperature = (
+      Number(this.weatherTemperature) - 273.15
+    ).toFixed(0);
     this.weatherTempFeel = (Number(this.weatherTempFeel) - 273.15).toFixed(0);
     this.disableK = false;
     this.disableC = true;
