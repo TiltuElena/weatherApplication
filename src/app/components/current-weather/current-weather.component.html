@@ -14,18 +14,18 @@
       />
     </div>
     <div class="tempScale" *ngIf="weatherService.loaded">
-      <div
+      <button [disabled]="weatherService.disableC"
         class="scale celsius"
-        (click)="weatherService.scale = 273.15; weatherService.loadData()"
+        (click)="weatherService.scale = 273.15; this.weatherService.updateC()"
       >
         C
-      </div>
-      <div
+      </button>
+      <button [disabled]="weatherService.disableK"
         class="scale kelvin"
-        (click)="weatherService.scale = 0; weatherService.loadData()"
+        (click)="weatherService.scale = 0; this.weatherService.updateK()"
       >
         K
-      </div>
+      </button>
     </div>
   </div>
   <div id="mainContainer" *ngIf="weatherService.loaded">

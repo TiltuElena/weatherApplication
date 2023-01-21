@@ -45,4 +45,9 @@
   color: white;
 }
 
+.bold-text {
+  font-size: 25px;
+  font-weight: bold;
+}
+
 /*# sourceMappingURL=weather-forecast.component.css.map */

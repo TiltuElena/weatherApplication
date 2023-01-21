@@ -24,12 +24,22 @@ export class WeatherService implements OnDestroy {
   weatherInfo: WeatherDetailsInterface[] | undefined;
   loaded: boolean = false;
   scale: number = 273.15;
+  disableC: boolean = true;
+  disableK: boolean = false;
   forecastIcon: string[] = [];
   forecastTemp: number[] = [];
-  forecastTempDetails: string[] = []
+  forecastTempDetails: string[] = [];
   data: string[] = [];
   forecastData: ForecastDetailsInterface[] = [];
-
+  weekday: string[] = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
 
   constructor(public httpClient: HttpClient) {}
 
@@ -39,7 +49,8 @@ export class WeatherService implements OnDestroy {
   }
 
   loadData() {
-    this.forecastData = []
+    this.forecastData = [];
+
     this.subscription1 = this.httpClient
       .get(`${API_URL}weather?q=${this.weatherCity}&appid=${API_KEY}`)
       .subscribe((res: any) => {
@@ -77,11 +88,13 @@ export class WeatherService implements OnDestroy {
             detail: 'Max Temperature',
             img: 'assets/icons8-high-temperature-64.png',
             data: `${(res.main.temp_max - this.scale).toFixed(0)}`,
+            dataChange: res.main.temp_max.toFixed(0)
           },
           {
             detail: 'Min Temperature',
             img: 'assets/icons8-low-temperature-64.png',
             data: `${(res.main.temp_min - this.scale).toFixed(0)}`,
+            dataChange: res.main.temp_min.toFixed(0)
           },
         ];
       });
@@ -89,7 +102,6 @@ export class WeatherService implements OnDestroy {
     this.subscription2 = this.httpClient
       .get(`${API_URL}forecast?q=${this.weatherCity}&appid=${API_KEY}`)
       .subscribe((res: any) => {
-
         for (const elem of res.list) {
           this.data.push(elem.dt_txt.substring(0, elem.dt_txt.indexOf(' ')));
         }
@@ -97,34 +109,50 @@ export class WeatherService implements OnDestroy {
         this.data = [...new Set(this.data)].slice(1);
 
         for (const data of this.data) {
-
           for (const elem of res.list) {
             if (elem.dt_txt.substring(0, elem.dt_txt.indexOf(' ')) === data) {
               this.forecastTemp.push(
                 Number((Number(elem.main.temp) - this.scale).toFixed(0))
               );
               this.forecastIcon.push(elem.weather[0].icon);
-              this.forecastTempDetails.push(`${elem.weather[0].description
-                .slice(0, 1)
-                .toUpperCase()}${elem.weather[0].description.slice(1)}`)
+              this.forecastTempDetails.push(
+                `${elem.weather[0].description
+                  .slice(0, 1)
+                  .toUpperCase()}${elem.weather[0].description.slice(1)}`
+              );
             }
           }
 
           this.forecastData.push({
-            data: data,
+            date: new Date(data),
+            weekDay: this.weekday[new Date(data).getDay()],
             max: Math.max(...this.forecastTemp),
             min: Math.min(...this.forecastTemp),
+            maxChange: (Math.max(...this.forecastTemp) + 273.15).toFixed(),
+            minChange: (Math.min(...this.forecastTemp) + 273.15).toFixed(),
             icon: `http://openweathermap.org/img/wn/${this.forecastIcon[0]}@2x.png`,
-            details: this.forecastTempDetails[0]
+            details: this.forecastTempDetails[0],
           });
 
           this.forecastTemp = [];
           this.forecastIcon = [];
           this.forecastTempDetails = [];
+          this.data = [];
         }
-
-        console.log(this.forecastData);
       });
   }
 
+  updateK() {
+    this.weatherTemp = (Number(this.weatherTemp) + 273.15).toFixed(0);
+    this.weatherTempFeel = (Number(this.weatherTempFeel) + 273.15).toFixed(0);
+    this.disableK = true;
+    this.disableC = false;
+  }
+
+  updateC() {
+    this.weatherTemp = (Number(this.weatherTemp) - 273.15).toFixed(0);
+    this.weatherTempFeel = (Number(this.weatherTempFeel) - 273.15).toFixed(0);
+    this.disableK = false;
+    this.disableC = true;
+  }
 }

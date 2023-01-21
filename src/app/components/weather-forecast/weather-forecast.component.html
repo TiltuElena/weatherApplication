@@ -1,16 +1,20 @@
-<div  class="mainContainer">
+<div class="mainContainer">
   <div class="container" *ngFor="let forecast of weatherService.forecastData">
-    <img [src]="forecast.icon" alt="forecastIcon">
+    <img [src]="forecast.icon" alt="forecastIcon" />
     <div class="forecastDetails">
-    <span class="text">{{forecast.data}}</span>
-    <span class="text">{{forecast.details}}</span>
-    <div class="text"><span>{{forecast.min}}</span>
-      <span *ngIf="weatherService.scale === 0">K </span>
-      <span *ngIf="weatherService.scale !== 0">C </span>
-      <span>/ {{forecast.max}}</span>
-      <span *ngIf="weatherService.scale === 0">K </span>
-      <span *ngIf="weatherService.scale !== 0">C </span>
-    </div>
+      <span class="text bold-text">{{ forecast.weekDay }}</span>
+      <span class="text">{{ forecast.date | date : "longDate" }}</span>
+      <span class="text">{{ forecast.details }}</span>
+      <div class="text">
+        <span *ngIf="weatherService.scale === 0">{{ forecast.minChange }}</span>
+        <span *ngIf="weatherService.scale !== 0">{{ forecast.min }}</span>
+        <span *ngIf="weatherService.scale === 0">K </span>
+        <span *ngIf="weatherService.scale !== 0">C </span>
+        <span *ngIf="weatherService.scale === 0"> / {{ forecast.maxChange }}</span>
+        <span *ngIf="weatherService.scale !== 0"> / {{ forecast.max }}</span>
+        <span *ngIf="weatherService.scale === 0">K </span>
+        <span *ngIf="weatherService.scale !== 0">C </span>
+      </div>
     </div>
   </div>
 </div>

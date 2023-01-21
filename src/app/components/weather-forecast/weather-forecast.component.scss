@@ -1,11 +1,11 @@
-.mainContainer{
+.mainContainer {
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.container{
+.container {
   display: flex;
   gap: 10px;
   position: relative;
@@ -26,13 +26,13 @@
     border-radius: 20px;
   }
 
-  img{
+  img {
     width: 150px;
     height: 150px;
   }
 }
 
-.forecastDetails{
+.forecastDetails {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -41,9 +41,13 @@
   position: relative;
 }
 
-.text{
+.text {
   font-family: "Play", sans-serif;
   font-size: 20px;
   color: white;
+}
 
+.bold-text {
+  font-size: 25px;
+  font-weight: bold;
 }
